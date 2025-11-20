@@ -1,0 +1,21 @@
+services:
+  # If you change the image name, you need to change it in the deployment workflow as well
+  web:
+    image: web:latest
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    ports:
+      - "${WEB_PORT:-5080}:80"
+    depends_on:
+      - backend
+
+  backend:
+    image: backend:latest
+    build:
+      context: .
+      dockerfile: ./apps/backend/Dockerfile
+    ports:
+      - "${BACKEND_PORT:-5070}:${BACKEND_PORT:-5070}"
+    environment:
+      - PORT=${BACKEND_PORT:-5070}
