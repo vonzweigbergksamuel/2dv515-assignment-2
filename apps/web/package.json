@@ -40,6 +40,8 @@
 		"vite-plugin-devtools-json": "^1.0.0"
 	},
 	"dependencies": {
+		"@2dv515-assignment-2/orpc": "workspace:*",
+		"@orpc/client": "^1.11.3",
 		"@orpc/tanstack-query": "^1.11.3",
 		"@tanstack/svelte-query": "^6.0.8",
 		"@tanstack/svelte-query-devtools": "^6.0.0"
