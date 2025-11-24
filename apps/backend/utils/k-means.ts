@@ -1,12 +1,16 @@
 import type { Blog } from "../services/parsers/blogs.parser.js";
-import { pearson, type WordCounts } from "./pierson.js";
+import { pearson, type WordCounts } from "./pearson.js";
 
 interface Centroid {
 	wordCounts: WordCounts;
 	assignments: Blog[];
 }
 
-export function kMeans(blogs: Blog[], k: number, maxIterations: number = 20) {
+export function kMeans(
+	blogs: Blog[],
+	k: number,
+	maxIterations: number = 20,
+): Centroid[] {
 	if (blogs.length === 0 || k <= 0) {
 		return [];
 	}

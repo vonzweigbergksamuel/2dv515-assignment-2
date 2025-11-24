@@ -3,11 +3,17 @@ import { kMeans } from "../../../utils/k-means.js";
 import { getParsedBlogs } from "../../parsers/blogs.parser.js";
 import { publicProcedure } from "../index.js";
 
-export const testRouter = {
-	test: publicProcedure
+const outputSchema = z.array(
+	z.object({
+		id: z.number(),
+		assignments: z.array(z.string()),
+	}),
+);
+
+export const clusterRouter = {
+	clusters: publicProcedure
 		.route({ method: "GET" })
-		.input(z.object({ limit: z.number().optional() }))
-		.output(z.object({ message: z.string(), timestamp: z.number() }))
+		.output(outputSchema)
 		.handler(async () => {
 			const blogs = await getParsedBlogs();
 
@@ -16,12 +22,12 @@ export const testRouter = {
 			}
 
 			const clusters = kMeans(blogs, 5, 100);
-			const assignments = clusters.map((cluster) =>
-				cluster.assignments.map((blog) => blog.name),
-			);
 
-			console.log("Assignments", assignments);
-
-			return { message: "OK", timestamp: Date.now() };
+			return clusters.map((cluster, index) => {
+				return {
+					id: index,
+					assignments: cluster.assignments.map((blog) => blog.name),
+				};
+			});
 		}),
 };

@@ -1,7 +1,7 @@
 import type { RouterClient } from "@orpc/server";
 import * as z from "zod";
 import { publicProcedure } from "../index.js";
-import { testRouter } from "./test.js";
+import { clusterRouter } from "./clusters.js";
 
 export const appRouter = {
 	healthCheck: publicProcedure
@@ -11,7 +11,7 @@ export const appRouter = {
 			await new Promise((resolve) => setTimeout(resolve, 2000));
 			return { message: "OK", timestamp: Date.now() };
 		}),
-	...testRouter,
+	...clusterRouter,
 };
 
 export type AppRouter = typeof appRouter;
