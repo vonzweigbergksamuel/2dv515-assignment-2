@@ -1,14 +1,33 @@
-export function pierson(firstNode: any, secondNode: any) {
-	let sumFirstNode: number = 0;
-	let sumSecondNode: number = 0;
+import type { Blog } from "../services/parsers/blogs.parser.js";
 
-	let sumSqrdFirstNode: number = 0;
-	let sumSqrdSecondNode: number = 0;
+export function pearson(blogA: Blog, blogB: Blog): number {
+	let sumA: number = 0;
+	let sumB: number = 0;
 
-	let matching = 706; // TODO: Update to none hard-coded value
+	let sumASquared: number = 0;
+	let sumBSquared: number = 0;
+
+	let productSum: number = 0;
+
+	const matching = 706; // TODO: Update to none hard-coded value
 
 	for (let i = 0; i <= matching; i++) {
-		const countFirstNode = firstNode.wordCount(i);
-		const countSecondNode = secondNode.wordCount(i);
+		const countA = blogA.wordCounts[i];
+		const countB = blogB.wordCounts[i];
+
+		sumA += countA;
+		sumB += countB;
+
+		sumASquared += countA ** 2;
+		sumBSquared += countB ** 2;
+
+		productSum += countA * countB;
 	}
+
+	const num = productSum - (sumA * sumB) / matching;
+	const den = Math.sqrt(
+		(sumASquared - sumA ** 2 / matching) * (sumBSquared - sumB ** 2 / matching),
+	);
+
+	return 1 - num / den;
 }
