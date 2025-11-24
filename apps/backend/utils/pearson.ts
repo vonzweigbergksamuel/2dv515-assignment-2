@@ -3,6 +3,7 @@ export type WordCounts = Record<string, number>;
 export function pearson(
 	wordCountsA: WordCounts,
 	wordCountsB: WordCounts,
+	allWords?: string[],
 ): number {
 	let sumA: number = 0;
 	let sumB: number = 0;
@@ -10,13 +11,14 @@ export function pearson(
 	let sumBSquared: number = 0;
 	let productSum: number = 0;
 
-	const allWords = new Set([
-		...Object.keys(wordCountsA),
-		...Object.keys(wordCountsB),
-	]);
-	const numWords = allWords.size;
+	const words =
+		allWords ||
+		Array.from(
+			new Set([...Object.keys(wordCountsA), ...Object.keys(wordCountsB)]),
+		);
+	const numWords = words.length;
 
-	for (const word of allWords) {
+	for (const word of words) {
 		const countA = wordCountsA[word] || 0;
 		const countB = wordCountsB[word] || 0;
 
@@ -27,10 +29,14 @@ export function pearson(
 		productSum += countA * countB;
 	}
 
-	const num = productSum - (sumA * sumB) / numWords;
-	const den = Math.sqrt(
+	const numerator = productSum - (sumA * sumB) / numWords;
+	const denominator = Math.sqrt(
 		(sumASquared - sumA ** 2 / numWords) * (sumBSquared - sumB ** 2 / numWords),
 	);
 
-	return 1 - num / den;
+	if (denominator === 0) {
+		return 0;
+	}
+
+	return 1 - numerator / denominator;
 }

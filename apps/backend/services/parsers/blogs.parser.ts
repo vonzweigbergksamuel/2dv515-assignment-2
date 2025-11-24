@@ -24,10 +24,12 @@ export const getParsedBlogs = async (): Promise<Blog[] | undefined> => {
 	await new Promise((resolve, reject) => {
 		fs.createReadStream(path.resolve("datasets", "blogdata.txt"))
 			.pipe(csv.parse({ headers: true, delimiter: "\t" }))
+			// biome-ignore lint/suspicious/noExplicitAny: Ok
 			.on("error", (error: any) => reject(error))
 			.on("headers", (headers: string[]) => {
 				wordHeaders = headers.slice(1);
 			})
+			// biome-ignore lint/suspicious/noExplicitAny: Ok
 			.on("data", (row: any) => {
 				const wordCounts: Record<string, number> = {};
 				for (const word of wordHeaders) {

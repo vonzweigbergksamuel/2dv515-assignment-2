@@ -17,7 +17,9 @@ export function kMeans(
 
 	const allWords = new Set<string>();
 	for (const blog of blogs) {
-		Object.keys(blog.wordCounts).map((word: string) => allWords.add(word));
+		for (const word of Object.keys(blog.wordCounts)) {
+			allWords.add(word);
+		}
 	}
 	const words = Array.from(allWords);
 	const n = words.length;
@@ -30,12 +32,13 @@ export function kMeans(
 			centroid.assignments = [];
 		}
 
+		// Assign blogs to the closest centroid
 		for (const blog of blogs) {
 			let distance = Infinity;
 			let best: Centroid | null = null;
 
 			for (const centroid of centroids) {
-				const cDist = pearson(centroid.wordCounts, blog.wordCounts);
+				const cDist = pearson(centroid.wordCounts, blog.wordCounts, words);
 
 				if (cDist < distance) {
 					best = centroid;
@@ -48,6 +51,10 @@ export function kMeans(
 			}
 		}
 
+		// Store the old centroids for convergence check
+		const oldCentroids = centroids.map((centroid) => centroid.wordCounts);
+
+		// Calculate the average word count for each centroid
 		for (const centroid of centroids) {
 			for (let i = 0; i < n; i++) {
 				const word = words[i];
@@ -63,6 +70,29 @@ export function kMeans(
 
 				centroid.wordCounts[word] = avg;
 			}
+		}
+
+		let converged = true;
+		const threshold = 0.001;
+
+		// Check if the centroids have converged
+		for (let j = 0; j < centroids.length; j++) {
+			for (const word of words) {
+				const oldValue = oldCentroids[j][word] || 0;
+				const newValue = centroids[j].wordCounts[word] || 0;
+				const diff = Math.abs(oldValue - newValue);
+				if (diff > threshold) {
+					converged = false;
+					break;
+				}
+			}
+			if (!converged) {
+				break;
+			}
+		}
+
+		if (converged) {
+			break;
 		}
 	}
 
