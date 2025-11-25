@@ -3,23 +3,33 @@
 	import { orpc } from "$lib/api/client";
 
 	const query = createQuery(() =>
-		orpc.healthCheck.queryOptions({
-			input: {},
-			context: { cache: false }
+		orpc.clusters.queryOptions({
+			input: {
+				k: 5,
+				maxIterations: 20,
+				force: true
+			}
 		})
 	);
 </script>
 
-<h1>Welcome to Meter Lab</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<h1>2dv515 Assignment 2</h1>
+<button on:click={() => query.refetch()} class="mb-4!">Refetch</button>
 
 {#if query.isLoading}
 	<p>Loading...</p>
 {:else if query.isSuccess}
-	<p>{query.data?.message}</p>
-	<p>{query.data?.timestamp}</p>
+	<div class="grid grid-cols-3! gap-4!">
+		{#each query.data as cluster}
+			<ul>
+				<h2>Cluster {cluster.id}</h2>
+
+				{#each cluster.assignments as assignment}
+					<li class="list-none!">{assignment},</li>
+				{/each}
+			</ul>
+		{/each}
+	</div>
 {:else if query.isError}
 	<p>{query.error?.message}</p>
 {/if}
-
-<button on:click={() => query.refetch()}>Refetch</button>
